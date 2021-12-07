@@ -1,0 +1,37 @@
+version: "3"
+ 
+services:
+ 
+    apache:
+        build: ./docker/apache
+        volumes:
+            - /host/ampdev-5min/webroot/:/var/www/html/
+            - /host/ampdev-5min/docker/apache/php.ini:/usr/local/etc/php/php.ini
+            - /host/ampdev-5min/logs:/var/logs/external
+        networks:
+            - backend
+            - front
+        ports:
+            - "8081:80"
+ 
+    db:
+        image: "mysql:8"
+        volumes:
+            - /host/ampdev-5min/db:/var/lib/mysql
+        command: --innodb_use_native_aio=0
+        environment:
+               MYSQL_ROOT_PASSWORD: root
+               MYSQL_DATABASE: local
+               MYSQL_USER: local
+               MYSQL_PASSWORD: local
+        networks:
+            - backend
+            - front
+        ports:
+            - "3306:3306"
+ 
+networks:
+    front:
+        external:
+            name: front
+    backend:
